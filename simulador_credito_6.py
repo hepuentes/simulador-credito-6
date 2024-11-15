@@ -11,6 +11,7 @@ LINEAS_DE_CREDITO = {
         "tasa_mensual": 1.9715,  # Tasa mensual en %
         "tasa_anual_efectiva": 26.4,  # Tasa E.A. en %
         "aval_porcentaje": 0.10,  # 10% del capital prestado
+        "seguro_vida_base": 150000  # Costo base del seguro de vida por año
     },
     "Microflex": {
         "descripcion": "Crédito rotativo para personas en sectores informales, orientado a cubrir necesidades de liquidez rápida con pagos semanales. Desde 50.000 hasta 500.000, sujeto a capacidad de endeudamiento.",
@@ -35,6 +36,11 @@ COSTOS_ASOCIADOS = {
 # Sumar todos los costos asociados
 total_costos_asociados = sum(COSTOS_ASOCIADOS.values())
 
+# Función para calcular el costo del seguro de vida según el plazo en meses
+def calcular_seguro_vida(plazo, seguro_vida_base):
+    años = plazo // 12
+    return seguro_vida_base * años if años >= 1 else 0
+
 # Estilos CSS personalizados
 st.markdown("""
     <style>
@@ -50,23 +56,26 @@ st.markdown("""
         .stButton button {
             background-color: #4A90E2;
             color: white;
-            font-size: 18px;
-            padding: 10px 20px;
+            font-size: 20px;
+            padding: 15px 25px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            width: fit-content;
+            display: block;
+            margin: 0 auto;
         }
         .stButton button:hover {
             background-color: #357ABD;
         }
         .result-box {
-            border: 2px solid #4A90E2;
+            border: 1px solid #4A90E2;
             padding: 15px;
             border-radius: 5px;
             background-color: #E6F7FF;
             text-align: center;
             width: fit-content;
-            margin: 0 auto;
+            margin: 20px auto;
         }
         .whatsapp-box {
             text-align: center;
@@ -75,7 +84,7 @@ st.markdown("""
         .whatsapp-link {
             color: #4A90E2;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 22px;
             text-decoration: none;
         }
         .whatsapp-link:hover {
@@ -113,8 +122,11 @@ monto = st.number_input(
 # Cálculo del aval
 aval = monto * detalles["aval_porcentaje"]
 
-# Cálculo del total a financiar (monto + aval + costos asociados)
-total_financiar = monto + aval + total_costos_asociados
+# Seguro de vida solo para LoansiFlex
+seguro_vida = calcular_seguro_vida(plazo=detalles["plazo_max"], seguro_vida_base=detalles.get("seguro_vida_base", 0)) if tipo_credito == "LoansiFlex" else 0
+
+# Cálculo del total a financiar (monto + aval + costos asociados + seguro de vida)
+total_financiar = monto + aval + total_costos_asociados + seguro_vida
 
 # Selección de plazo
 if tipo_credito == "LoansiFlex":
@@ -155,19 +167,12 @@ if st.button("Simular"):
         total_pagar = cuota * plazo
         st.write(f"**Número de Cuotas**: {plazo}")
         st.write(f"**Costo del Aval y Otros**: COP {total_costos_asociados + aval:,.0f}")
+        if tipo_credito == "LoansiFlex":
+            st.write(f"**Seguro de Vida**: COP {seguro_vida:,.0f}")
         st.write(f"**Total del Interés a Pagar**: COP {total_interes:,.0f}")
         st.write(f"**Total a Pagar**: COP {total_pagar:,.0f}")
 
     # Botón de WhatsApp
     st.markdown("<h3 style='text-align: center;'>¿Interesado en solicitar este crédito?</h3>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center;'>Para más información, comuníquese con nosotros por WhatsApp:</p>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'><a href='https://wa.me/XXXXXXXXXXX' target='_blank' class='whatsapp-link'>Hacer solicitud vía WhatsApp</a></p>", unsafe_allow_html=True)
-
-    # Mensajes informativos
-    st.write("---")
-    st.markdown("""
-    <p class="info-text">
-        Los valores que arroja el simulador son aproximados y de carácter informativo. El incumplimiento en las fechas de pago genera intereses moratorios diarios y gastos de cobranza que deberán ser cancelados junto con el capital adeudado.<br>
-        Aplica condiciones, sujeto a estudio de crédito y el interés estará sujeto según perfil de riesgo.
-    </p>
-    """, unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'><a href='https://wa.me/XXXXXXXXXXX' target='_blank' class='whatsapp-link'>Hacer solicitud vía Whats
