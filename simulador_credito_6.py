@@ -51,8 +51,9 @@ monto = st.number_input(
     min_value=detalles["monto_min"],
     max_value=detalles["monto_max"],
     step=50000,
-    formatted_number = "{:,.0f}".format(number) print
+    format="%d"
 )
+# Mostrar el monto con separadores de miles st.write(f"Monto Solicitado: {monto:,.0f} COP"
 
 # Cálculo del aval
 aval = monto * detalles["aval_porcentaje"]
