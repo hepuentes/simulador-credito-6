@@ -51,7 +51,7 @@ monto = st.number_input(
     min_value=detalles["monto_min"],
     max_value=detalles["monto_max"],
     step=50000,
-    format={:,.0f}
+    formatted_number = "{:,.0f}".format(number) print
 )
 
 # Cálculo del aval
