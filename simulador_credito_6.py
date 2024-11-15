@@ -39,7 +39,7 @@ total_costos_asociados = sum(COSTOS_ASOCIADOS.values())
 st.markdown("<h1 style='color: #4A90E2; text-align: center; font-weight: bold;'>Simulador de Crédito Loansi</h1>", unsafe_allow_html=True)
 
 # Selección de línea de crédito
-st.markdown("<p style='font-weight: bold; font-size: 16px;'>Selecciona la Línea de Crédito</p>", unsafe_allow_html=True)
+st.markdown("<p style='font-weight: bold; font-size: 16px; margin-bottom: -10px;'>Selecciona la Línea de Crédito</p>", unsafe_allow_html=True)
 tipo_credito = st.selectbox("", options=LINEAS_DE_CREDITO.keys())
 detalles = LINEAS_DE_CREDITO[tipo_credito]
 
@@ -47,7 +47,7 @@ detalles = LINEAS_DE_CREDITO[tipo_credito]
 st.write(f"**Descripción**: {detalles['descripcion']}")
 
 # Selección del monto con formato numérico
-st.markdown("<p style='font-weight: bold; font-size: 16px;'>Monto Solicitado (COP):</p>", unsafe_allow_html=True)
+st.markdown("<p style='font-weight: bold; font-size: 16px; margin-bottom: -10px;'>Monto Solicitado (COP):</p>", unsafe_allow_html=True)
 monto = st.number_input(
     "",
     min_value=detalles["monto_min"],
@@ -71,7 +71,7 @@ else:
     frecuencia_pago = "Semanal"
 
 # Botón de simulación estilizado
-if st.markdown("<div style='text-align: center;'><button style='font-size: 18px; padding: 10px 20px; color: white; background-color: #4A90E2; border: none; border-radius: 5px; cursor: pointer;'>Simular</button></div>", unsafe_allow_html=True):
+if st.button("Simular"):
     # Cálculo de la cuota
     if tipo_credito == "LoansiFlex":
         # Calcular la cuota mensual usando la fórmula de amortización
@@ -90,8 +90,8 @@ if st.markdown("<div style='text-align: center;'><button style='font-size: 18px;
     
     # Mostrar la cuota estimada en un cuadro llamativo
     st.markdown(f"""
-    <div style="border: 2px solid #4A90E2; padding: 10px; border-radius: 5px; background-color: #E6F7FF; text-align: center;">
-        <h3 style="color: #4A90E2; font-weight: bold;">Cuota Estimada: COP {cuota:,.0f}</h3>
+    <div style="border: 2px solid #4A90E2; padding: 15px; border-radius: 5px; background-color: #E6F7FF; text-align: center; width: fit-content; margin: 0 auto;">
+        <h2 style="color: #4A90E2; font-weight: bold;">Cuota Estimada: COP {cuota:,.0f}</h2>
     </div>
     """, unsafe_allow_html=True)
 
@@ -104,6 +104,11 @@ if st.markdown("<div style='text-align: center;'><button style='font-size: 18px;
         st.write(f"**Total del Interés a Pagar**: COP {total_interes:,.0f}")
         st.write(f"**Total a Pagar**: COP {total_pagar:,.0f}")
 
+    # Botón de WhatsApp
+    st.markdown("<h3 style='text-align: center;'>¿Interesado en solicitar este crédito?</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Para más información, comuníquese con nosotros por WhatsApp:</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'><a href='https://wa.me/XXXXXXXXXXX' target='_blank' style='color: #4A90E2; font-weight: bold;'>Hacer solicitud vía WhatsApp</a></p>", unsafe_allow_html=True)
+
     # Mensajes informativos
     st.write("---")
     st.markdown("""
@@ -112,9 +117,3 @@ if st.markdown("<div style='text-align: center;'><button style='font-size: 18px;
         Aplica condiciones, sujeto a estudio de crédito y el interés estará sujeto según perfil de riesgo.
     </p>
     """, unsafe_allow_html=True)
-
-# Botón para solicitar el crédito
-st.write("---")
-st.markdown("<h3 style='text-align: center;'>¿Interesado en solicitar este crédito?</h3>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Para más información, comuníquese con nosotros por WhatsApp:</p>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'><a href='https://wa.me/XXXXXXXXXXX' target='_blank' style='color: #4A90E2; font-weight: bold;'>Hacer solicitud vía WhatsApp</a></p>", unsafe_allow_html=True)
