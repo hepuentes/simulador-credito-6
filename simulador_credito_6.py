@@ -35,8 +35,62 @@ COSTOS_ASOCIADOS = {
 # Sumar todos los costos asociados
 total_costos_asociados = sum(COSTOS_ASOCIADOS.values())
 
-# Título de la aplicación y estilo
-st.markdown("<h1 style='color: #4A90E2; text-align: center; font-weight: bold;'>Simulador de Crédito Loansi</h1>", unsafe_allow_html=True)
+# Estilos CSS personalizados
+st.markdown("""
+    <style>
+        .main {
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+        h1 {
+            color: #4A90E2;
+            text-align: center;
+            font-weight: bold;
+        }
+        .stButton button {
+            background-color: #4A90E2;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .stButton button:hover {
+            background-color: #357ABD;
+        }
+        .result-box {
+            border: 2px solid #4A90E2;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #E6F7FF;
+            text-align: center;
+            width: fit-content;
+            margin: 0 auto;
+        }
+        .whatsapp-box {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .whatsapp-link {
+            color: #4A90E2;
+            font-weight: bold;
+            font-size: 20px;
+            text-decoration: none;
+        }
+        .whatsapp-link:hover {
+            color: #357ABD;
+        }
+        .info-text {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Título de la aplicación
+st.markdown("<h1>Simulador de Crédito Loansi</h1>", unsafe_allow_html=True)
 
 # Selección de línea de crédito
 st.markdown("<p style='font-weight: bold; font-size: 16px; margin-bottom: -10px;'>Selecciona la Línea de Crédito</p>", unsafe_allow_html=True)
@@ -79,41 +133,6 @@ if st.button("Simular"):
     else:
         # Conversión de tasa mensual a semanal
         tasa_semanal = (1 + detalles["tasa_mensual"] / 100) ** (1/4) - 1
-        cuota = (total_financiar * tasa_semanal) / (1 - (1 + tasa_semanal) ** -plazo)
-
-    # Mostrar resultados
-    st.markdown("<h3 style='font-weight: bold;'>Resultado de Simulación</h3>", unsafe_allow_html=True)
-    st.write(f"**Monto Solicitado**: COP {monto:,.0f}")
-    st.write(f"**Tasa de Interés Mensual**: {detalles['tasa_mensual']}%")
-    st.write(f"**Interés Efectivo Anual (E.A.)**: {detalles['tasa_anual_efectiva']}%")
-    st.write(f"**Frecuencia de Pago**: {frecuencia_pago}")
-    
-    # Mostrar la cuota estimada en un cuadro llamativo
-    st.markdown(f"""
-    <div style="border: 2px solid #4A90E2; padding: 15px; border-radius: 5px; background-color: #E6F7FF; text-align: center; width: fit-content; margin: 0 auto;">
-        <h2 style="color: #4A90E2; font-weight: bold;">Cuota Estimada: COP {cuota:,.0f}</h2>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Detalle adicional en sección desplegable
-    with st.expander("Ver Detalles del Crédito"):
-        total_interes = cuota * plazo - total_financiar
-        total_pagar = cuota * plazo
-        st.write(f"**Número de Cuotas**: {plazo}")
-        st.write(f"**Costo del Aval y Otros**: COP {total_costos_asociados + aval:,.0f}")
-        st.write(f"**Total del Interés a Pagar**: COP {total_interes:,.0f}")
-        st.write(f"**Total a Pagar**: COP {total_pagar:,.0f}")
-
-    # Botón de WhatsApp
-    st.markdown("<h3 style='text-align: center;'>¿Interesado en solicitar este crédito?</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'>Para más información, comuníquese con nosotros por WhatsApp:</p>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'><a href='https://wa.me/XXXXXXXXXXX' target='_blank' style='color: #4A90E2; font-weight: bold;'>Hacer solicitud vía WhatsApp</a></p>", unsafe_allow_html=True)
-
-    # Mensajes informativos
-    st.write("---")
-    st.markdown("""
-    <p style="text-align: center; font-size: 14px;">
-        Los valores que arroja el simulador son aproximados y de carácter informativo. El incumplimiento en las fechas de pago genera intereses moratorios diarios y gastos de cobranza que deberán ser cancelados junto con el capital adeudado.<br>
-        Aplica condiciones, sujeto a estudio de crédito y el interés estará sujeto según perfil de riesgo.
-    </p>
-    """, unsafe_allow_html=True)
+        cuota = (total_financiar * tasa_semanal
+::contentReference[oaicite:0]{index=0}
+ 
