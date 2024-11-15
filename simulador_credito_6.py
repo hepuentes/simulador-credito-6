@@ -54,6 +54,12 @@ monto = st.number_input(
     format="%d"
 )
 
+# Cálculo del aval
+aval = monto * detalles["aval_porcentaje"]
+
+# Cálculo del total a financiar (monto + aval + costos asociados)
+total_financiar = monto + aval + total_costos_asociados
+
 # Selección de plazo
 if tipo_credito == "LoansiFlex":
     plazo = st.slider("Plazo en Meses:", min_value=detalles["plazo_min"], max_value=detalles["plazo_max"], step=12)
@@ -65,11 +71,11 @@ else:
 # Cálculo de la cuota
 if tipo_credito == "LoansiFlex":
     # Calcular la cuota mensual usando la fórmula de amortización
-    cuota = (monto * (detalles["tasa_mensual"] / 100)) / (1 - (1 + detalles["tasa_mensual"] / 100) ** -plazo)
+    cuota = (total_financiar * (detalles["tasa_mensual"] / 100)) / (1 - (1 + detalles["tasa_mensual"] / 100) ** -plazo)
 else:
     # Conversión de tasa mensual a semanal o quincenal
     tasa_semanal = (1 + detalles["tasa_mensual"] / 100) ** (1/4) - 1 if frecuencia_pago == "Semanal" else (1 + detalles["tasa_mensual"] / 100) ** (1/2) - 1
-    cuota = (monto * tasa_semanal) / (1 - (1 + tasa_semanal) ** -plazo)
+    cuota = (total_financiar * tasa_semanal) / (1 - (1 + tasa_semanal) ** -plazo)
 
 # Mostrar resultados
 st.markdown("### Resultado de Simulación")
@@ -81,10 +87,10 @@ st.write(f"**Cuota Estimada**: COP {cuota:,.0f}")
 
 # Detalle adicional en sección desplegable
 with st.expander("Ver Detalles del Crédito"):
-    total_interes = cuota * plazo - monto
-    total_pagar = cuota * plazo + total_costos_asociados
+    total_interes = cuota * plazo - total_financiar
+    total_pagar = cuota * plazo
     st.write(f"**Número de Cuotas**: {plazo}")
-    st.write(f"**Costo del Aval y Otros**: COP {total_costos_asociados:,.0f}")
+    st.write(f"**Costo del Aval y Otros**: COP {total_costos_asociados + aval:,.0f}")
     st.write(f"**Total del Interés a Pagar**: COP {total_interes:,.0f}")
     st.write(f"**Total a Pagar**: COP {total_pagar:,.0f}")
 
