@@ -3,7 +3,7 @@ import streamlit as st
 # Datos para cada línea de crédito
 LINEAS_DE_CREDITO = {
     "LoansiFlex": {
-        "descripcion": "Créditos libre inversión para empleados, independientes, personas naturales y pensionados.",
+        "descripcion": "Crédito de libre inversión para empleados, independientes, personas naturales y pensionados.",
         "monto_min": 1000000,
         "monto_max": 20000000,
         "plazo_min": 12,
@@ -12,8 +12,8 @@ LINEAS_DE_CREDITO = {
         "tasa_anual_efectiva": 26.4,  # Tasa E.A. en %
         "aval_porcentaje": 0.10,  # 10% del capital prestado
     },
-    "LoansiMicroFlex": {
-        "descripcion": "Crédito rotativo para competir con el crédito gota a gota, orientado a personas en sectores informales.",
+    "Microflex": {
+        "descripcion": "Crédito rotativo para personas en sectores informales, orientado a cubrir necesidades de liquidez rápida con pagos semanales.",
         "monto_min": 50000,
         "monto_max": 300000,
         "plazo_min": 4,
@@ -53,7 +53,6 @@ monto = st.number_input(
     step=50000,
     format="%d"
 )
-# Mostrar el monto con separadores de miles st.write(f"Monto Solicitado: {monto:,.0f} COP"
 
 # Cálculo del aval
 aval = monto * detalles["aval_porcentaje"]
@@ -67,33 +66,56 @@ if tipo_credito == "LoansiFlex":
     frecuencia_pago = "Mensual"
 else:
     plazo = st.slider("Plazo en Semanas:", min_value=detalles["plazo_min"], max_value=detalles["plazo_max"], step=1)
-    frecuencia_pago = st.selectbox("Frecuencia de Pago", ["Semanal", "Quincenal"])
+    frecuencia_pago = "Semanal"
 
-# Cálculo de la cuota
-if tipo_credito == "LoansiFlex":
-    # Calcular la cuota mensual usando la fórmula de amortización
-    cuota = (total_financiar * (detalles["tasa_mensual"] / 100)) / (1 - (1 + detalles["tasa_mensual"] / 100) ** -plazo)
-else:
-    # Conversión de tasa mensual a semanal o quincenal
-    tasa_semanal = (1 + detalles["tasa_mensual"] / 100) ** (1/4) - 1 if frecuencia_pago == "Semanal" else (1 + detalles["tasa_mensual"] / 100) ** (1/2) - 1
-    cuota = (total_financiar * tasa_semanal) / (1 - (1 + tasa_semanal) ** -plazo)
+# Botón de simulación
+if st.button("Simular"):
+    # Cálculo de la cuota
+    if tipo_credito == "LoansiFlex":
+        # Calcular la cuota mensual usando la fórmula de amortización
+        cuota = (total_financiar * (detalles["tasa_mensual"] / 100)) / (1 - (1 + detalles["tasa_mensual"] / 100) ** -plazo)
+    else:
+        # Conversión de tasa mensual a semanal
+        tasa_semanal = (1 + detalles["tasa_mensual"] / 100) ** (1/4) - 1
+        cuota = (total_financiar * tasa_semanal) / (1 - (1 + tasa_semanal) ** -plazo)
 
-# Mostrar resultados
-st.markdown("### Resultado de Simulación")
-st.write(f"**Monto Solicitado**: COP {monto:,.0f}")
-st.write(f"**Tasa de Interés Mensual**: {detalles['tasa_mensual']}%")
-st.write(f"**Interés Efectivo Anual (E.A.)**: {detalles['tasa_anual_efectiva']}%")
-st.write(f"**Frecuencia de Pago**: {frecuencia_pago}")
-st.write(f"**Cuota Estimada**: COP {cuota:,.0f}")
+    # Mostrar resultados
+    st.markdown("### Resultado de Simulación")
+    st.write(f"**Monto Solicitado**: COP {monto:,.0f}")
+    st.write(f"**Tasa de Interés Mensual**: {detalles['tasa_mensual']}%")
+    st.write(f"**Interés Efectivo Anual (E.A.)**: {detalles['tasa_anual_efectiva']}%")
+    st.write(f"**Frecuencia de Pago**: {frecuencia_pago}")
+    
+    # Mostrar la cuota estimada en un cuadro llamativo
+    st.markdown(f"""
+    <div style="border: 2px solid #4A90E2; padding: 10px; border-radius: 5px; background-color: #E6F7FF; text-align: center;">
+        <h3 style="color: #4A90E2; font-weight: bold;">Cuota Estimada: COP {cuota:,.0f}</h3>
+    </div>
+    """, unsafe_allow_html=True)
 
-# Detalle adicional en sección desplegable
-with st.expander("Ver Detalles del Crédito"):
-    total_interes = cuota * plazo - total_financiar
-    total_pagar = cuota * plazo
-    st.write(f"**Número de Cuotas**: {plazo}")
-    st.write(f"**Costo del Aval y Otros**: COP {total_costos_asociados + aval:,.0f}")
-    st.write(f"**Total del Interés a Pagar**: COP {total_interes:,.0f}")
-    st.write(f"**Total a Pagar**: COP {total_pagar:,.0f}")
+    # Detalle adicional en sección desplegable
+    with st.expander("Ver Detalles del Crédito"):
+        total_interes = cuota * plazo - total_financiar
+        total_pagar = cuota * plazo
+        st.write(f"**Número de Cuotas**: {plazo}")
+        st.write(f"**Costo del Aval y Otros**: COP {total_costos_asociados + aval:,.0f}")
+        st.write(f"**Total del Interés a Pagar**: COP {total_interes:,.0f}")
+        st.write(f"**Total a Pagar**: COP {total_pagar:,.0f}")
+
+    # Mensajes informativos
+    st.write("---")
+    st.markdown("""
+    <p style="text-align: center; font-size: 14px;">
+        Los valores que arroja el simulador son aproximados y de carácter informativo. El incumplimiento en las fechas de pago genera intereses moratorios diarios y gastos de cobranza que deberán ser cancelados junto con el capital adeudado.<br>
+        Aplica condiciones, sujeto a estudio de crédito y el interés estará sujeto según perfil de riesgo.
+    </p>
+    """, unsafe_allow_html=True)
+
+# Botón para solicitar el crédito
+st.write("---")
+st.markdown("<h3 style='text-align: center;'>¿Interesado en solicitar este crédito?</h3>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Para más información, comuníquese con nosotros por WhatsApp:</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'><a href='https://wa.me/XXXXXXXXXXX' target='_blank' style='color: #4A90E2; font-weight: bold;'>Hacer solicitud vía WhatsApp</a></p>", unsafe_allow_html=True)
 
 # Botón para solicitar el crédito
 st.write("---")
